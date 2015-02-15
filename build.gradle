@@ -6,6 +6,10 @@ ext {
     jssc = 'org.scream3r:jssc:2.8.0'
 }
 
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.2.1'
+}
+
 allprojects {
     apply plugin: 'idea'
     apply plugin: 'java'
