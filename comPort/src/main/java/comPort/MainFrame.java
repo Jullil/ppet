@@ -5,6 +5,7 @@ import jssc.SerialPortException;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
+import javax.swing.border.BevelBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,22 +14,40 @@ import java.awt.event.KeyEvent;
 public class MainFrame extends JFrame {
     private static Logger logger = Logger.getLogger(MainFrame.class);
 
+    private final JPanel container = new JPanel(new GridLayout(0, 2));
+
     public static void main(String[] args) {
         final MainFrame window = new MainFrame();
+
+
 
     }
 
     public MainFrame() {
+        /*final Console console = new Console("COM1");
+        console.setVisible(true);
+        container.add(console);
+*/
+
+
+        setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
+
+        createConsole();
+        createConsole();
+        createConsole();
+
+
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocation(Math.round(Window.CENTER_ALIGNMENT), Math.round(Window.TOP_ALIGNMENT));
         setSize(1000, 600);
 
-        createMenuBar();
+        setJMenuBar(createMenuBar());
+        add(container);
 
         setVisible(true);
     }
 
-    private void createMenuBar() {
+    private JMenuBar createMenuBar() {
         final JMenuBar menuBar = new JMenuBar();
 
         final JMenu fileMenu = new JMenu("File");
@@ -60,7 +79,7 @@ public class MainFrame extends JFrame {
         fileMenu.add(exitItem);
         menuBar.add(fileMenu);
 
-        setJMenuBar(menuBar);
+        return menuBar;
     }
 
     private void createConnectionDialog() {
@@ -68,10 +87,18 @@ public class MainFrame extends JFrame {
         dialog.addSuccessListener(new ConnectionDialog.SuccessListener() {
             @Override
             public void actionPerformed(ConnectionSettings settings) {
-                createConnection(settings);
+                //createConnection(settings);
+                createConsole();
             }
         });
         dialog.setVisible(true);
+    }
+
+    private void createConsole() {
+        final Console console = new Console("COM1");
+        console.setVisible(true);
+        container.add(console);
+        repaint();
     }
 
     public void createConnection(ConnectionSettings settings) {
