@@ -6,6 +6,7 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
+import java.util.List;
 
 public class Console extends JPanel {
 
@@ -17,7 +18,7 @@ public class Console extends JPanel {
     private ConsoleCommandLine commandLine = new ConsoleCommandLine();
     private ConsoleListener listener = null;
     private String oldText = "";
-    private Vector history = new Vector();
+    private List<String> history = new ArrayList<>();
     private int history_index = -1;
     private boolean history_mode = false;
 
@@ -144,7 +145,7 @@ public class Console extends JPanel {
             }
             // System.out.println(history_index);
             commandLine.clear();
-            String p = (String) history.get(history_index);
+            String p = history.get(history_index);
             commandLine.fromString(p.split(""));
 
         } else if (dir == 2) {
@@ -154,7 +155,7 @@ public class Console extends JPanel {
             }
             // System.out.println(history_index);
             commandLine.clear();
-            String p = (String) history.get(history_index);
+            String p = history.get(history_index);
             commandLine.fromString(p.split(""));
         }
 
@@ -167,7 +168,7 @@ public class Console extends JPanel {
             if (e.getKeyCode() == 38 | e.getKeyCode() == 40) {
                 if (e.getKeyCode() == 38) {
                     history(1);
-                } else if (e.getKeyCode() == 40 & history_mode != false) {
+                } else if (e.getKeyCode() == 40 & history_mode) {
                     history(2);
                 }
             } else {
