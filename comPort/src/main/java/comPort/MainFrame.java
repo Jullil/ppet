@@ -32,9 +32,9 @@ public class MainFrame extends JFrame {
 
         setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
 
+        /*createConsole();
         createConsole();
-        createConsole();
-        createConsole();
+        createConsole();*/
 
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -87,8 +87,8 @@ public class MainFrame extends JFrame {
         dialog.addSuccessListener(new ConnectionDialog.SuccessListener() {
             @Override
             public void actionPerformed(ConnectionSettings settings) {
-                //createConnection(settings);
-                createConsole();
+                createConnection(settings);
+                //createConsole();
             }
         });
         dialog.setVisible(true);

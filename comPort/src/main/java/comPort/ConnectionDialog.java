@@ -55,7 +55,7 @@ public class ConnectionDialog extends JDialog {
     private final JComboBox<String> dataBitsField = createSettingsComboBoxField(dataBits);
     private final JComboBox<String> stopBitsField = createSettingsComboBoxField(stopBits);
     private final JComboBox<String> paritiesField = createSettingsComboBoxField(parities);
-    private final JButton createBtn = new JButton("Close");
+    private final JButton createBtn = new JButton("Create");
 
     public ConnectionDialog() {
         setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
