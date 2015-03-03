@@ -24,10 +24,10 @@ public class MainFrame extends JFrame {
     }
 
     public MainFrame() {
-        /*final Console console = new Console("COM1");
+        final Console console = new Console("COM1");
         console.setVisible(true);
         container.add(console);
-*/
+
 
 
         setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
