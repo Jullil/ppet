@@ -15,9 +15,12 @@ public class CommandLine extends JLabel {
 
     private StringBuilder command = new StringBuilder();
     private List<String> history = new ArrayList<String>();
+    private int historyIndex = 0;
 
     private static final int HISTORY_UP = 1;
     private static final int HISTORY_DOWN = 2;
+
+    private List<Listener> listeners = new ArrayList<Listener>();
 
     public CommandLine() {
         setFocusable(true);
@@ -42,6 +45,7 @@ public class CommandLine extends JLabel {
         for (final String string : strings) {
             command.append(string);
         }
+        repaint();
     }
 
     @Override
@@ -51,51 +55,72 @@ public class CommandLine extends JLabel {
 
     public void clear() {
         command = new StringBuilder();
+        repaint();
     }
 
     public boolean isEmpty() {
         return command.length() == 0;
     }
 
-    public CommandLine append(String str) {
+    public CommandLine appendSymbol(String str) {
         command.append(str);
+        repaint();
         return this;
     }
 
-    public CommandLine removeLast() {
+    public CommandLine removeLastSymbol() {
         command.delete(command.length() - 1, command.length());
+        repaint();
         return this;
     }
 
     private void handleKey(KeyEvent e) {
         final int keyCode = e.getKeyCode();
-        System.out.println(keyCode);
         switch (keyCode) {
             case KeyEvent.VK_DOWN:
             case KeyEvent.VK_UP:
-                loadFromHistory(keyCode == KeyEvent.VK_UP ? HISTORY_UP : HISTORY_DOWN);
+                loadFromHistory(keyCode == KeyEvent.VK_UP ? HISTORY_DOWN : HISTORY_UP);
                 break;
             case KeyEvent.VK_ENTER:
-                enter();
+                enterCommand();
                 break;
             case KeyEvent.VK_BACK_SPACE:
-                backspace();
+                removeLastSymbol();
                 break;
             case KeyEvent.CHAR_UNDEFINED:
                 break;
             default:
-                commandLine2.append(String.valueOf(e.getKeyChar()));
-                print();
+                appendSymbol(String.valueOf(e.getKeyChar()));
         }
+    }
+
+    public void addConsoleCommandLineListener(Listener listener) {
+        listeners.add(listener);
+    }
+
+    private void notifyObservers(String command) {
+        for (final Listener listener : listeners) {
+            listener.receiveCommand(command.toString());
+        }
+    }
+
+    private void enterCommand() {
+        addToHistory(command.toString());
+        notifyObservers(command.toString());
+        clear();
+    }
+
+    private void addToHistory(String command) {
+        history.add(command);
+        historyIndex = history.size() - 1;
     }
 
     private void loadFromHistory(int dir) {
         if (history.isEmpty()) {
             return;
         }
-        if (dir == 1) {
-            history_mode = true;
-            history_index++;
+        if (dir == HISTORY_UP) {
+            historyIndex++;
             if (history_index > history.size() - 1) {
                 history_index = 0;
             }
@@ -103,7 +128,7 @@ public class CommandLine extends JLabel {
             commandLine2.clear();
             String p = (String) history.get(history_index);
             commandLine2.fromString(p.split(""));
-        } else if (dir == 2) {
+        } else if (dir == HISTORY_DOWN) {
             history_index--;
             if (history_index < 0) {
                 history_index = history.size() - 1;
@@ -114,6 +139,14 @@ public class CommandLine extends JLabel {
             commandLine2.fromString(p.split(""));
         }
 
-        print();
+        repaint();
+    }
+
+    public static interface Listener {
+        String receiveCommand(String command);
+    }
+
+    private void repaint() {
+
     }
 }
