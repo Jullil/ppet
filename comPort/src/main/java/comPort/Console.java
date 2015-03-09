@@ -6,21 +6,20 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
-import java.util.List;
 
 public class Console extends JPanel {
 
     private static final long serialVersionUID = -4538532229007904362L;
 
-    private JLabel commandLabel = new JLabel(">");
+    private CommandLine commandLine = new CommandLine();
+
     private String prompt = "";
     public boolean ReadOnly = false;
-    private ConsoleCommandLine commandLine = new ConsoleCommandLine();
+    private ConsoleCommandLine commandLine2 = new ConsoleCommandLine();
     private ConsoleListener listener = null;
     private String oldText = "";
-    private List<String> history = new ArrayList<>();
+    private Vector history = new Vector();
     private int history_index = -1;
-    private boolean history_mode = false;
 
     final JLabel output = new JLabel();
 
@@ -39,52 +38,37 @@ public class Console extends JPanel {
         output.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                commandLabel.grabFocus();
+                commandLine.grabFocus();
             }
 
             @Override
             public void mousePressed(MouseEvent e) {
-                commandLabel.grabFocus();
+                commandLine.grabFocus();
             }
 
             @Override
-            public void mouseReleased(MouseEvent e) {
-            }
+            public void mouseReleased(MouseEvent e) {}
 
             @Override
             public void mouseEntered(MouseEvent e) {
-                commandLabel.grabFocus();
+                commandLine.grabFocus();
             }
 
             @Override
-            public void mouseExited(MouseEvent e) {
-            }
+            public void mouseExited(MouseEvent e) {}
         });
+        output.setVerticalAlignment(JLabel.TOP);
+        output.setVerticalTextPosition(JLabel.TOP);
         output.setAlignmentY(TOP_ALIGNMENT);
+
         body.add(output, BorderLayout.CENTER);
 
-        commandLabel.setFocusable(true);
-        commandLabel.addKeyListener(new KeyListener() {
-            @Override
-            public void keyTyped(KeyEvent e) {
+        commandLine.setBackground(new Color(255, 31, 88, 111));
+        commandLine.setBorder(new BevelBorder(BevelBorder.LOWERED));
 
-            }
-
-            @Override
-            public void keyPressed(KeyEvent e) {
-
-            }
-
-            @Override
-            public void keyReleased(KeyEvent e) {
-                handleKey(e);
-            }
-        });
-        commandLabel.setBackground(new Color(255, 31, 88, 111));
-        commandLabel.setBorder(new BevelBorder(BevelBorder.LOWERED));
         output.setBackground(new Color(46, 222, 87, 222));
         output.setBorder(new BevelBorder(BevelBorder.LOWERED));
-        body.add(commandLabel, BorderLayout.SOUTH);
+        body.add(commandLine, BorderLayout.SOUTH);
 
     }
 
@@ -101,14 +85,14 @@ public class Console extends JPanel {
     }
 
     private void backspace() {
-        if (!commandLine.isEmpty()) {
-            commandLine.removeLast();
+        if (!commandLine2.isEmpty()) {
+            commandLine2.removeLast();
             print();
         }
     }
 
     private void enter() {
-        final String command = commandLine.toString();
+        final String command = commandLine2.toString();
         String result = "";
         if (listener != null) {
             result = listener.receiveCommand(command);
@@ -116,77 +100,26 @@ public class Console extends JPanel {
 
         history.add(command);
 
-        commandLine.clear();
+        commandLine2.clear();
         if (!result.equals("")) {
             result = result + "<br>";
         }
-        final String commandLineText = commandLabel.getText().substring(6, commandLabel.getText().length() - 7);
+        final String commandLineText = commandLine.getText().substring(6, commandLine.getText().length() - 7);
         oldText = output.getText() + "<br>" + commandLineText.substring(0, commandLineText.length() - 1) + "<BR>" + result;
         output.setText("<HTML>" + oldText + "</HTML>");
         output.repaint();
 
-        commandLabel.setText(">_");
+        commandLine.setText(">_");
     }
 
     private void print() {
-        commandLabel.setText("<HTML>" + commandLine.toString() + "_</HTML>");
-        commandLabel.repaint();
+        commandLine.setText("<HTML>" + commandLine2.toString() + "_</HTML>");
+        commandLine.repaint();
     }
 
-    private void history(int dir) {
-        if (history.isEmpty()) {
-            return;
-        }
-        if (dir == 1) {
-            history_mode = true;
-            history_index++;
-            if (history_index > history.size() - 1) {
-                history_index = 0;
-            }
-            // System.out.println(history_index);
-            commandLine.clear();
-            String p = history.get(history_index);
-            commandLine.fromString(p.split(""));
 
-        } else if (dir == 2) {
-            history_index--;
-            if (history_index < 0) {
-                history_index = history.size() - 1;
-            }
-            // System.out.println(history_index);
-            commandLine.clear();
-            String p = history.get(history_index);
-            commandLine.fromString(p.split(""));
-        }
 
-        print();
-    }
 
-    private void handleKey(KeyEvent e) {
-        System.out.println(e.getKeyCode());
-        if (!ReadOnly) {
-            if (e.getKeyCode() == 38 | e.getKeyCode() == 40) {
-                if (e.getKeyCode() == 38) {
-                    history(1);
-                } else if (e.getKeyCode() == 40 & history_mode) {
-                    history(2);
-                }
-            } else {
-                history_index = -1;
-                history_mode = false;
-                if (e.getKeyCode() == 13 | e.getKeyCode() == 10) {
-                    enter();
-                } else if (e.getKeyCode() == 8) {
-                    backspace();
-                } else {
-                    if (e.getKeyChar() != KeyEvent.CHAR_UNDEFINED) {
-                        commandLine.append(String.valueOf(e.getKeyChar()));
-                        print();
-                    }
-                }
-            }
-        }
-    }
 }
 
 
