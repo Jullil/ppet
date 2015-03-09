@@ -11,18 +11,24 @@ import java.util.List;
  * @author y.loykova
  */
 public class CommandLine extends JLabel {
-    private final String greeting = ">";
+    private final String greeting;
 
-    private StringBuilder command = new StringBuilder();
+    private StringBuilder command = getEmptyCommand();
     private List<String> history = new ArrayList<String>();
     private int historyIndex = 0;
 
-    private static final int HISTORY_UP = 1;
-    private static final int HISTORY_DOWN = 2;
+    private static final int HISTORY_NEXT = 1;
+    private static final int HISTORY_PREVIOUS = 2;
 
     private List<Listener> listeners = new ArrayList<Listener>();
 
-    public CommandLine() {
+    public CommandLine(String greeting) {
+        this.greeting = greeting;
+
+        init();
+    }
+
+    private void init() {
         setFocusable(true);
         addKeyListener(new KeyListener() {
             @Override
@@ -40,12 +46,14 @@ public class CommandLine extends JLabel {
         });
     }
 
-    @SuppressWarnings("unchecked")
-    public void fromString(String[] strings) {
-        for (final String string : strings) {
-            command.append(string);
-        }
-        repaint();
+    private StringBuilder getEmptyCommand() {
+        return new StringBuilder(greeting);
+    }
+
+    public void fromString(String string) {
+        command = getEmptyCommand();
+        command.append(string);
+        update();
     }
 
     @Override
@@ -54,24 +62,22 @@ public class CommandLine extends JLabel {
     }
 
     public void clear() {
-        command = new StringBuilder();
-        repaint();
+        command = getEmptyCommand();
+        update();
     }
 
     public boolean isEmpty() {
         return command.length() == 0;
     }
 
-    public CommandLine appendSymbol(String str) {
+    public void appendSymbol(String str) {
         command.append(str);
-        repaint();
-        return this;
+        update();
     }
 
-    public CommandLine removeLastSymbol() {
+    public void removeLastSymbol() {
         command.delete(command.length() - 1, command.length());
-        repaint();
-        return this;
+        update();
     }
 
     private void handleKey(KeyEvent e) {
@@ -79,7 +85,7 @@ public class CommandLine extends JLabel {
         switch (keyCode) {
             case KeyEvent.VK_DOWN:
             case KeyEvent.VK_UP:
-                loadFromHistory(keyCode == KeyEvent.VK_UP ? HISTORY_DOWN : HISTORY_UP);
+                loadFromHistory(keyCode == KeyEvent.VK_UP ? HISTORY_PREVIOUS : HISTORY_NEXT);
                 break;
             case KeyEvent.VK_ENTER:
                 enterCommand();
@@ -100,7 +106,7 @@ public class CommandLine extends JLabel {
 
     private void notifyObservers(String command) {
         for (final Listener listener : listeners) {
-            listener.receiveCommand(command.toString());
+            listener.receiveCommand(command);
         }
     }
 
@@ -115,38 +121,30 @@ public class CommandLine extends JLabel {
         historyIndex = history.size() - 1;
     }
 
-    private void loadFromHistory(int dir) {
+    private void loadFromHistory(int direction) {
         if (history.isEmpty()) {
             return;
         }
-        if (dir == HISTORY_UP) {
+        if (direction == HISTORY_NEXT) {
             historyIndex++;
-            if (history_index > history.size() - 1) {
-                history_index = 0;
+            if (historyIndex >= history.size()) {
+                historyIndex = history.size() - 1;
             }
-            // System.out.println(history_index);
-            commandLine2.clear();
-            String p = (String) history.get(history_index);
-            commandLine2.fromString(p.split(""));
-        } else if (dir == HISTORY_DOWN) {
-            history_index--;
-            if (history_index < 0) {
-                history_index = history.size() - 1;
+        } else if (direction == HISTORY_PREVIOUS) {
+            historyIndex--;
+            if (historyIndex < 0) {
+                historyIndex = 0;
             }
-            // System.out.println(history_index);
-            commandLine2.clear();
-            String p = (String) history.get(history_index);
-            commandLine2.fromString(p.split(""));
         }
-
-        repaint();
+        fromString(history.get(historyIndex));
     }
 
     public static interface Listener {
-        String receiveCommand(String command);
+        void receiveCommand(String command);
     }
 
-    private void repaint() {
-
+    private void update() {
+        setText(command.toString());
+        repaint();
     }
 }

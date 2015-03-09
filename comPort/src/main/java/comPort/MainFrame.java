@@ -1,61 +1,58 @@
 package comPort;
 
-import jssc.SerialPort;
-import jssc.SerialPortException;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
-import javax.swing.border.BevelBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ListIterator;
 
 public class MainFrame extends JFrame {
     private static Logger logger = Logger.getLogger(MainFrame.class);
 
     private final JPanel container = new JPanel(new GridLayout(0, 2));
 
+    private final List<PortConsole> consoles = new ArrayList<>();
+
+
     public static void main(String[] args) {
         final MainFrame window = new MainFrame();
-
-
-
+        window.setVisible(true);
     }
 
     public MainFrame() {
-        final Console console = new Console("COM1");
-        console.setVisible(true);
-        container.add(console);
-
-
-
         setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
 
-        /*createConsole();
-        createConsole();
-        createConsole();*/
+        ConnectionSettings settings = new ConnectionSettings("COM1", 1, 1, 1, 1);
+        addConsole(settings);
+        addConsole(settings);
+        addConsole(settings);
 
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent event) {
+                onExitApplication();
+                System.exit(0);
+            }
+        });
 
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocation(Math.round(Window.CENTER_ALIGNMENT), Math.round(Window.TOP_ALIGNMENT));
         setSize(1000, 600);
 
         setJMenuBar(createMenuBar());
         add(container);
-
-        setVisible(true);
     }
 
     private JMenuBar createMenuBar() {
         final JMenuBar menuBar = new JMenuBar();
 
-        final JMenu fileMenu = new JMenu("File");
+        final JMenu fileMenu = new JMenu("Файл");
         fileMenu.setMnemonic(KeyEvent.VK_F);
 
-        final JMenuItem newConnectionItem = new JMenuItem("New connection");
+        final JMenuItem newConnectionItem = new JMenuItem("Новое соединения");
         newConnectionItem.setMnemonic(KeyEvent.VK_N);
-        newConnectionItem.setToolTipText("Create a new connection to COM port");
+        newConnectionItem.setToolTipText("Создать новое соединения с COM-портом");
         newConnectionItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
@@ -66,9 +63,9 @@ public class MainFrame extends JFrame {
         fileMenu.add(newConnectionItem);
         menuBar.add(fileMenu);
 
-        JMenuItem exitItem = new JMenuItem("Exit");
+        JMenuItem exitItem = new JMenuItem("Выход");
         exitItem.setMnemonic(KeyEvent.VK_E);
-        exitItem.setToolTipText("Exit application");
+        exitItem.setToolTipText("Закрыть приложение");
         exitItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
@@ -87,36 +84,30 @@ public class MainFrame extends JFrame {
         dialog.addSuccessListener(new ConnectionDialog.SuccessListener() {
             @Override
             public void actionPerformed(ConnectionSettings settings) {
-                createConnection(settings);
-                //createConsole();
+                addConsole(settings);
             }
         });
         dialog.setVisible(true);
     }
 
-    private void createConsole() {
-        final Console console = new Console("COM1");
+    private void addConsole(ConnectionSettings settings) {
+        final PortConsole console = new PortConsole(settings.getPortName(), settings);
         console.setVisible(true);
+        consoles.add(console);
+
         container.add(console);
         repaint();
     }
 
-    public void createConnection(ConnectionSettings settings) {
-        logger.debug("Try to get connection with settings: " + settings);
+    private void onExitApplication() {
+        for (PortConsole console : consoles) {
+            console.close();
+        }
+    }
 
-        SerialPort serialPort = new SerialPort(settings.getPortName());
-        try {
-            serialPort.openPort();
-            logger.debug("Post opened successfuly");
-            serialPort.setParams(settings.getBaudRate(), settings.getDataBits(), settings.getStopBits(), settings.getParity());
-            logger.debug("Params has setted");
-            serialPort.writeBytes("Hello World!!!".getBytes());
-            logger.debug("\"Hello World!!!\" successfully writen to port: ");
-            serialPort.closePort();
-            logger.debug("Port closed");
-        }
-        catch (SerialPortException ex){
-            logger.error("There are some errors with com-port connection", ex);
-        }
+    private void removeConsole(PortConsole console) {
+        console.close();
+        container.remove(console);
+        consoles.remove(console);
     }
 }

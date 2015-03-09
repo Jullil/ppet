@@ -18,11 +18,34 @@ allprojects {
     repositories {
         mavenCentral()
     }
+
 }
 
 project(':comPort') {
     dependencies {
         compile log4j
         compile jssc
+    }
+
+    jar {
+
+        archiveName = "com_port.jar"
+
+        from {
+
+            configurations.runtime.collect {
+                it.isDirectory() ? it : zipTree(it)
+            }
+
+            configurations.compile.collect {
+                it.isDirectory() ? it : zipTree(it)
+            }
+        }
+
+        manifest {
+            attributes 'Main-Class': 'comPort.MainFrame'
+        }
+
+        exclude 'META-INF/*.RSA', 'META-INF/*.SF','META-INF/*.DSA'
     }
 }

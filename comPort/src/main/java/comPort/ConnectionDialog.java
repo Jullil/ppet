@@ -8,6 +8,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
 import java.util.EventListener;
 
 /**
@@ -118,7 +119,7 @@ public class ConnectionDialog extends JDialog {
 
     private JComboBox<String> createComPortListField() {
         final String[] portNames = SerialPortList.getPortNames();
-        logger.info(portNames.length + " COM-ports have been founded: " + portNames);
+        logger.info(portNames.length + " COM-ports have been founded: " + Arrays.asList(portNames));
         final JComboBox<String> field = new JComboBox<>(portNames);
 
         return field;
