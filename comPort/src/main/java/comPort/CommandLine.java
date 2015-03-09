@@ -13,7 +13,7 @@ import java.util.List;
 public class CommandLine extends JLabel {
     private final String greeting;
 
-    private StringBuilder command = getEmptyCommand();
+    private StringBuilder command;
     private List<String> history = new ArrayList<String>();
     private int historyIndex = 0;
 
@@ -24,6 +24,7 @@ public class CommandLine extends JLabel {
 
     public CommandLine(String greeting) {
         this.greeting = greeting;
+        this.command = getEmptyCommand();
 
         init();
     }
@@ -44,6 +45,7 @@ public class CommandLine extends JLabel {
                 handleKey(e);
             }
         });
+        update();
     }
 
     private StringBuilder getEmptyCommand() {

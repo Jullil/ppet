@@ -6,6 +6,7 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
+import java.util.List;
 
 public class Console extends JPanel {
 
@@ -19,6 +20,7 @@ public class Console extends JPanel {
     private CommandLine.Listener listener;
 
     final JLabel output = new JLabel();
+    private List<CommandLine.Listener> listeners = new ArrayList<>();
 
     public Console(String title) {
         super();
@@ -63,17 +65,30 @@ public class Console extends JPanel {
         output.setBorder(new BevelBorder(BevelBorder.LOWERED));
         body.add(output, BorderLayout.CENTER);
 
+        commandLine.addConsoleCommandLineListener(new CommandLine.Listener() {
+            @Override
+            public void receiveCommand(String command) {
+                appendOutput(command);
+                notifyListeners(command);
+            }
+        });
         commandLine.setBackground(new Color(255, 31, 88, 111));
         commandLine.setBorder(new BevelBorder(BevelBorder.LOWERED));
         body.add(commandLine, BorderLayout.SOUTH);
     }
 
+    private void notifyListeners(String command) {
+        for (final CommandLine.Listener listener : listeners) {
+            listener.receiveCommand(command);
+        }
+    }
+
     public void addCommandListener(CommandLine.Listener listener) {
-        commandLine.addConsoleCommandLineListener(listener);
+        listeners.add(listener);
     }
 
     public void appendOutput(String data) {
-        output.setText(output.getText() + data);
+        output.setText(output.getText() + data + '\n');
     }
 
     public void close() {
