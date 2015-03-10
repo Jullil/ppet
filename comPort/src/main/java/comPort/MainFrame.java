@@ -28,7 +28,6 @@ public class MainFrame extends JFrame {
         ConnectionSettings settings = new ConnectionSettings("COM1", 1, 1, 1, 1);
         addConsole(settings);
         addConsole(settings);
-        addConsole(settings);
 
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent event) {

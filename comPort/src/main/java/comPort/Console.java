@@ -9,16 +9,8 @@ import java.util.*;
 import java.util.List;
 
 public class Console extends JPanel {
-
-    private static final long serialVersionUID = -4538532229007904362L;
-
-    private CommandLine commandLine = new CommandLine(">");
-
-    private String prompt = "";
-
-    private ConsoleCommandLine commandLine2 = new ConsoleCommandLine();
-    private CommandLine.Listener listener;
-
+    private final String greeting = "> ";
+    private CommandLine commandLine = new CommandLine(greeting);
     final JLabel output = new JLabel();
     private List<CommandLine.Listener> listeners = new ArrayList<>();
 
@@ -63,12 +55,13 @@ public class Console extends JPanel {
         output.setAlignmentY(TOP_ALIGNMENT);
         output.setBackground(new Color(46, 222, 87, 222));
         output.setBorder(new BevelBorder(BevelBorder.LOWERED));
-        body.add(output, BorderLayout.CENTER);
+        output.setAutoscrolls(true);
+        body.add(new JScrollPane(output, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
 
         commandLine.addConsoleCommandLineListener(new CommandLine.Listener() {
             @Override
             public void receiveCommand(String command) {
-                appendOutput(command);
+                appendOutput(greeting + command);
                 notifyListeners(command);
             }
         });
@@ -88,7 +81,15 @@ public class Console extends JPanel {
     }
 
     public void appendOutput(String data) {
-        output.setText(output.getText() + data + '\n');
+        setOutputData(getOutputData() + "<BR>" + data);
+    }
+
+    private void setOutputData(String data) {
+        output.setText("<HTML>" + data + "</HTML>");
+    }
+
+    private String getOutputData() {
+        return output.getText().replaceAll("(<HTML>|</HTML>)", "");
     }
 
     public void close() {

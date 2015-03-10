@@ -49,7 +49,7 @@ public class CommandLine extends JLabel {
     }
 
     private StringBuilder getEmptyCommand() {
-        return new StringBuilder(greeting);
+        return new StringBuilder();
     }
 
     public void fromString(String string) {
@@ -78,6 +78,9 @@ public class CommandLine extends JLabel {
     }
 
     public void removeLastSymbol() {
+        if (isEmpty()) {
+            return;
+        }
         command.delete(command.length() - 1, command.length());
         update();
     }
@@ -146,7 +149,7 @@ public class CommandLine extends JLabel {
     }
 
     private void update() {
-        setText(command.toString());
+        setText(greeting + command.toString());
         repaint();
     }
 }

@@ -31,6 +31,7 @@ public class PortConnection {
     }
 
     private void init() {
+        open();
         try {
             connection.setEventsMask(eventMask);
             connection.addEventListener(new SerialPortEventListener() {
@@ -69,13 +70,9 @@ public class PortConnection {
     }
 
     public void write(String command) {
-        if (!connection.isOpened()) {
-            open();
-        }
-
         final String portName = settings.getPortName();
         try {
-            logger.debug("Отправляю комманду на порт '" + portName + "'");
+            logger.debug("Отправляю комманду на порт '" + portName + "': " + command);
             connection.writeString(command);
             logger.debug("Успешно");
         } catch (final SerialPortException e) {
