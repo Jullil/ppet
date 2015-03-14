@@ -7,7 +7,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ListIterator;
 
 public class MainFrame extends JFrame {
     private static Logger logger = Logger.getLogger(MainFrame.class);
@@ -25,9 +24,9 @@ public class MainFrame extends JFrame {
     public MainFrame() {
         setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
 
-        ConnectionSettings settings = new ConnectionSettings("COM1", 1, 1, 1, 1);
+/*        ConnectionSettings settings = new ConnectionSettings("COM1", 1, 1, 1, 1);
         addConsole(settings);
-        addConsole(settings);
+        addConsole(settings);*/
 
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent event) {
@@ -95,7 +94,7 @@ public class MainFrame extends JFrame {
         consoles.add(console);
 
         container.add(console);
-        repaint();
+        validate();
     }
 
     private void onExitApplication() {

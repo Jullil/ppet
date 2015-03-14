@@ -2,8 +2,9 @@ package comPort;
 
 
 import javax.swing.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.EmptyBorder;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,7 +46,41 @@ public class CommandLine extends JLabel {
                 handleKey(e);
             }
         });
+        addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                grabFocus();
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+            }
+        });
         update();
+        addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                setBorder(new BevelBorder(BevelBorder.LOWERED));
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                setBorder(new EmptyBorder(2, 2, 2, 2));
+            }
+        });
     }
 
     private StringBuilder getEmptyCommand() {

@@ -67,6 +67,10 @@ public class ConnectionDialog extends JDialog {
         setLocationRelativeTo(null);
         setSize(300, 200);
 
+        baudRatesField.setSelectedItem(String.valueOf(SerialPort.BAUDRATE_9600));
+        dataBitsField.setSelectedItem(String.valueOf(SerialPort.DATABITS_8));
+        stopBitsField.setSelectedItem(String.valueOf(SerialPort.STOPBITS_1));
+        paritiesField.setSelectedItem(String.valueOf(SerialPort.PARITY_NONE));
 
         JPanel form = new JPanel(new GridLayout(0, 2));
         add(form);

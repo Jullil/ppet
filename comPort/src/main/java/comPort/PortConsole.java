@@ -9,7 +9,7 @@ public class PortConsole extends Console {
     public final PortConnection connection;
 
     public PortConsole(String title, ConnectionSettings settings) {
-        super(title);
+        super(title, settings.toString());
         this.settings = settings;
         this.connection = new PortConnection(settings);
 
