@@ -28,11 +28,11 @@ public class Console extends JPanel {
         body.setBorder(new BevelBorder(BevelBorder.LOWERED));
         add(body, BorderLayout.CENTER);
 
-        //output.setVerticalAlignment(JLabel.TOP);
-        //output.setVerticalTextPosition(JLabel.TOP);
         output.setAlignmentY(TOP_ALIGNMENT);
         output.setAutoscrolls(true);
-        body.add(new JScrollPane(output, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
+        final JScrollPane scrollPane = new JScrollPane(output, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setViewportView(output);
+        body.add(scrollPane, BorderLayout.CENTER);
 
         commandLine.addConsoleCommandLineListener(new CommandLine.Listener() {
             @Override
