@@ -10,7 +10,7 @@ import java.util.List;
 public class Console extends JPanel {
     private final String greeting = "> ";
     private CommandLine commandLine = new CommandLine(greeting);
-    final JLabel output = new JLabel();
+    final JTextArea output = new JTextArea();
     private List<CommandLine.Listener> listeners = new ArrayList<>();
 
     public Console(String title, String description) {
@@ -28,8 +28,8 @@ public class Console extends JPanel {
         body.setBorder(new BevelBorder(BevelBorder.LOWERED));
         add(body, BorderLayout.CENTER);
 
-        output.setVerticalAlignment(JLabel.TOP);
-        output.setVerticalTextPosition(JLabel.TOP);
+        //output.setVerticalAlignment(JLabel.TOP);
+        //output.setVerticalTextPosition(JLabel.TOP);
         output.setAlignmentY(TOP_ALIGNMENT);
         output.setAutoscrolls(true);
         body.add(new JScrollPane(output, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), BorderLayout.CENTER);
@@ -37,7 +37,7 @@ public class Console extends JPanel {
         commandLine.addConsoleCommandLineListener(new CommandLine.Listener() {
             @Override
             public void receiveCommand(String command) {
-                appendOutput(greeting + command);
+                appendOutput(greeting + command + '\n');
                 notifyListeners(command);
             }
         });
@@ -55,15 +55,7 @@ public class Console extends JPanel {
     }
 
     public void appendOutput(String data) {
-        setOutputData(getOutputData() + "<BR>" + data);
-    }
-
-    private void setOutputData(String data) {
-        output.setText("<HTML>" + data + "</HTML>");
-    }
-
-    private String getOutputData() {
-        return output.getText().replaceAll("(<HTML>|</HTML>)", "");
+        output.append(data);
     }
 
     public void close() {
