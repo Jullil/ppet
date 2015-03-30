@@ -122,21 +122,25 @@ public class CommandLine extends JLabel {
 
     private void handleKey(KeyEvent e) {
         final int keyCode = e.getKeyCode();
-        switch (keyCode) {
-            case KeyEvent.VK_DOWN:
-            case KeyEvent.VK_UP:
-                loadFromHistory(keyCode == KeyEvent.VK_UP ? HISTORY_PREVIOUS : HISTORY_NEXT);
-                break;
-            case KeyEvent.VK_ENTER:
-                enterCommand();
-                break;
-            case KeyEvent.VK_BACK_SPACE:
-                removeLastSymbol();
-                break;
-            case KeyEvent.CHAR_UNDEFINED:
-                break;
-            default:
-                appendSymbol(String.valueOf(e.getKeyChar()));
+        if (e.isControlDown() && e.getKeyCode() != 0) {
+            enterCommand();
+        } else {
+            switch (keyCode) {
+                case KeyEvent.VK_DOWN:
+                case KeyEvent.VK_UP:
+                    loadFromHistory(keyCode == KeyEvent.VK_UP ? HISTORY_PREVIOUS : HISTORY_NEXT);
+                    break;
+                case KeyEvent.VK_ENTER:
+                    enterCommand();
+                    break;
+                case KeyEvent.VK_BACK_SPACE:
+                    removeLastSymbol();
+                    break;
+                case KeyEvent.CHAR_UNDEFINED:
+                    break;
+                default:
+                    appendSymbol(String.valueOf(e.getKeyChar()));
+            }
         }
     }
 
