@@ -123,6 +123,7 @@ public class CommandLine extends JLabel {
     private void handleKey(KeyEvent e) {
         final int keyCode = e.getKeyCode();
         if (e.isControlDown() && e.getKeyCode() != 0) {
+            appendSymbol(String.valueOf(e.getKeyChar()));
             enterCommand();
         } else {
             switch (keyCode) {
